@@ -30,12 +30,12 @@ func Init() *gin.Engine {
 
 	users := r.Group("/user")
 	userController := controller.User{}
-	users.POST("/login", userController.Login)
-	users.POST("/register", userController.Register)
-	users.Use(middleware.Auth())
+	// users.Use(middleware.Auth())
 	{
-		users.GET("/", userController.ListUser)
-		users.GET("/uuid/:uuid", userController.FindOneByUUID)
+		users.GET("/", middleware.Auth(), userController.ListUser)
+		users.GET("/uuid/:uuid", middleware.Auth(), userController.FindOneByUUID)
+		users.POST("/login", userController.Login)
+		users.POST("/register", userController.Register)
 	}
 
 	// glosarium := r.Group("/glosarium")

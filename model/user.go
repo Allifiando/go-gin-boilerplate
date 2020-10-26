@@ -39,7 +39,6 @@ func (model *UserModel) GetAll(offset, limit int) (data []responses.UserModel, c
 func (model *UserModel) FindByUUID(uuid string) (data responses.UserModel, err error) {
 	query := `SELECT uuid, name, email FROM users where uuid = ?`
 	err = GetDB().QueryRow(query, uuid).Scan(&data.UUID, &data.Name, &data.Email)
-
 	if err != nil {
 		Error.Error(err)
 		return data, err

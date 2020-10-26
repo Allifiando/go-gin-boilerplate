@@ -56,6 +56,7 @@ func (U *User) FindOneByUUID(c *gin.Context) {
 	errorParams := map[string]interface{}{}
 	statusCode := 200
 	uuid := c.Params.ByName("uuid")
+
 	userModel := model.UserModel{}
 	data, err := userModel.FindByUUID(uuid)
 	if err != nil {
@@ -181,6 +182,21 @@ func (U *User) Register(c *gin.Context) {
 		Password: body.Password,
 	}
 
+	// Hash Password
+	bytes, err := bcrypt.GenerateFromPassword([]byte(req.Password), 12)
+	if err != nil {
+		statusCode = 406
+		Error.Error(err)
+		errorParams["meta"] = map[string]interface{}{
+			"status":  statusCode,
+			"message": "Error hashing password",
+		}
+		errorParams["code"] = statusCode
+		c.JSON(statusCode, helper.OutputAPIResponseWithPayload(errorParams))
+		return
+	}
+	req.Password = string(bytes)
+
 	userModel := model.UserModel{}
 	userData, _ := userModel.FindByEmail(body.Email)
 
@@ -203,20 +219,6 @@ func (U *User) Register(c *gin.Context) {
 		errorParams["meta"] = map[string]interface{}{
 			"status":  statusCode,
 			"message": "Error creating user",
-		}
-		errorParams["code"] = statusCode
-		c.JSON(statusCode, helper.OutputAPIResponseWithPayload(errorParams))
-		return
-	}
-
-	// Hash Password
-	bytes, err := bcrypt.GenerateFromPassword([]byte(req.Password), 12)
-	if err != nil {
-		statusCode = 406
-		Error.Error(err)
-		errorParams["meta"] = map[string]interface{}{
-			"status":  statusCode,
-			"message": "Error hashing password",
 		}
 		errorParams["code"] = statusCode
 		c.JSON(statusCode, helper.OutputAPIResponseWithPayload(errorParams))

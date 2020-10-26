@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -42,8 +41,6 @@ func Auth() gin.HandlerFunc {
 		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 			return []byte(os.Getenv("SECRET_KEY")), nil
 		})
-		fmt.Println(token)
-		fmt.Println(claims)
 		if err != nil {
 			c.Abort()
 			return
@@ -53,11 +50,11 @@ func Auth() gin.HandlerFunc {
 			return
 		}
 
-		uid := claims["uuid"].(string)
+		uid := claims["uid"].(string)
 		userModel := model.UserModel{}
 		userData, err := userModel.FindByUUID(uid)
 
-		if userData.UUID != "" {
+		if userData.UUID == "" {
 			errorParams["meta"] = map[string]interface{}{
 				"status":  statusCode,
 				"message": "Unauthorized",
