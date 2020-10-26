@@ -47,3 +47,6 @@ Golang Gin boilerplate with MySql resource.
 ## Usage example
 
 `curl http://localhost:4000/`
+
+[go-image]: https://img.shields.io/badge/Go--version-1.13-blue.svg
+[go-url]: https://golang.org/doc/go1.13
